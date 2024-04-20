@@ -15,11 +15,7 @@ jobs:
         node-version: [20.x]  # 定义 Node.js 版本
 
     steps:
-      - uses: actions/checkout@v3  # 检出代码
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
+
       - name: Install dependencies
         run: npm install  # 安装依赖
       - name: Run a script
