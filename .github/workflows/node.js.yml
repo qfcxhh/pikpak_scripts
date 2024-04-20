@@ -1,29 +1,26 @@
-name: node.js.yml # yml文件名
- 
+name: Scheduled Node.js CI
+
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-  schedule:   
-    - cron: '0 9 * * *'   # 定时运行的时间，国际标准时间，北京时间要+8
- 
+  schedule:
+    - cron: "0 1 * * *"  # 每天 UTC 时间 1 点执行
+  workflow_dispatch: # 允许手动触发
+
 jobs:
-  run-coupons: # 任务名
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10 # 设置作业超时时间为10分钟
+
+    strategy:
+      matrix:
+        node-version: [20.x]  # 定义 Node.js 版本
+
     steps:
-      - uses: actions/checkout@main  #采用main分支下的
-           
-      - name: Setup Node.js
-        uses: actions/setup-node@v2  #安装node.js
+      - uses: actions/checkout@v3  # 检出代码
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
-          
-      - name: Install Dependency       
-        run: |
-          npm install
-          npm install parse
-          npm install got
-          npm install xmlhttprequest
-          npm install tough-cookie         
-          node ./coupons.js  # 要运行的js脚本，放在根目录下
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install  # 安装依赖
+      - name: Run a script
+        run: node main.js  # 运行 main.js 脚本
